@@ -58,7 +58,6 @@ body {
   border-radius: 0;
   box-shadow: none;
 }
-
 /* ---------- LEFT PANEL ---------- */
 
 .builder {
@@ -169,7 +168,7 @@ body {
 
 .menu-preview {
   position: relative;
-  width: 1200px;
+  width: min(76vw, 1200px);
   aspect-ratio: 16 / 9;
   background: #221818;
   border: none;
