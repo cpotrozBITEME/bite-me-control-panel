@@ -1,16 +1,16 @@
 @font-face {
-  font-family: "Brasika";
-  src: url("./assets/fonts/Brasika.otf") format("opentype");
+  font-family: "CalvousSpursStamp";
+  src: url("./assets/fonts/CalvousSpursStamp.otf") format("opentype");
 }
 
 @font-face {
-  font-family: "Calvous";
-  src: url("./assets/fonts/Calvous.otf") format("opentype");
+  font-family: "Brasika";
+  src: url("./assets/fonts/brasika.otf") format("opentype");
 }
 
 @font-face {
   font-family: "Franklin";
-  src: url("./assets/fonts/Franklin.otf") format("opentype");
+  src: url("./assets/fonts/franklin.otf") format("opentype");
 }
 
 /* ---------- GLOBAL ---------- */
@@ -29,13 +29,34 @@ body {
 /* ---------- LAYOUT ---------- */
 
 .app {
-    display: grid;
-    grid-template-columns: 360px 1fr;
-    min-height: 100vh;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.builder {
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .app.publish {
-    grid-template-columns: 1fr;
+  grid-template-columns: 1fr;
+}
+
+.app.publish .preview-wrap {
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.app.publish .menu-preview {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* ---------- LEFT PANEL ---------- */
@@ -48,7 +69,7 @@ body {
 }
 
 .builder h1 {
-  font-family: "CALVOUS SPURS STAMP", serif;
+  font-family: "CALVOUSSPURSSTAMP", serif;
   color: #f49624;
   font-size: 48px;
   margin: 0;
@@ -140,8 +161,10 @@ body {
 .preview-wrap {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 30px;
+  align-items: flex-start;
+  padding: 20px;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .menu-preview {
@@ -167,7 +190,7 @@ body {
 
 .menu-header {
   text-align: center;
-  font-family: "CALVOUS SPURS STAMP", serif;
+  font-family: "CALVOUSSPURSSTAMP", serif;
   color: #f49624;
   font-size: 80px;
   border-bottom: 5px dotted #f49624;
@@ -203,7 +226,7 @@ body {
 }
 
 .menu-panel h2 {
-  font-family: "CALVOUS SPURS STAMP", serif;
+  font-family: "CALVOUSSPURSSTAMP", serif;
   color: #f49624;
   text-align: center;
   margin-top: 0;
@@ -215,6 +238,7 @@ body {
 
 .menu-item {
   text-align: center;
+  font-family: "Brasika", serif;
   margin-bottom: 18px;
 }
 
@@ -228,6 +252,7 @@ body {
 
 .menu-item p {
   font-size: 15px;
+  font-family: "Brasika", serif;
   line-height: 1.35;
   color: #fff4df;
   margin: 0 0 8px;
