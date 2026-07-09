@@ -48,6 +48,8 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
+  align-items: center;
 }
 
 .app.publish .menu-preview {
@@ -57,6 +59,7 @@ body {
   aspect-ratio: auto;
   border-radius: 0;
   box-shadow: none;
+  padding: 35px;
 }
 /* ---------- LEFT PANEL ---------- */
 
@@ -163,18 +166,19 @@ body {
   align-items: flex-start;
   padding: 20px;
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .menu-preview {
   position: relative;
-  width: min(76vw, 1200px);
+  width: min(100%, 1200px);
   aspect-ratio: 16 / 9;
   background: #221818;
   border: none;
   border-radius: 28px;
-  padding: 45px;
+  padding: 35px;
   box-shadow: 0 0 40px rgba(0,0,0,.45);
+  overflow: hidden;
 }
 
 .menu-preview::after {
