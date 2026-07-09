@@ -164,7 +164,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 20px;
+  padding: 50px;
   height: 100vh;
   overflow: auto;
 }
