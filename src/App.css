@@ -291,16 +291,16 @@ body {
 }
 
 .menu-preview.compact .menu-item h3 {
-  font-size: 24px;
+  font-size: 45px;
 }
 
 .menu-preview.compact .menu-item p {
-  font-size: 14px;
+  font-size: 32x;
   line-height: 1.2;
 }
 
 .menu-preview.compact .menu-item strong {
-  font-size: 17px;
+  font-size: 32px;
 }
 
 .service-toggle {
