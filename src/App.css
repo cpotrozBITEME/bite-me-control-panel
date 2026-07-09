@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: "Franklin";
-  src: url("./assets/fonts/franklin.otf") format("opentype");
+  src: url("./assets/fonts/itc-franklin-gothic-lt-book-condensed-opentype_ufonts.com.otf") format("opentype");
 }
 
 /* ---------- GLOBAL ---------- */
@@ -238,7 +238,6 @@ body {
 
 .menu-item {
   text-align: center;
-  font-family: "Brasika", serif;
   margin-bottom: 18px;
 }
 
