@@ -195,7 +195,7 @@ body {
   text-align: center;
   font-family: "CalvousSpursStamp", serif;
   color: #f49624;
-  font-size: 80px;
+  font-size: 100px;
   border-bottom: 5px dotted #f49624;
   padding-bottom: 24px;
   margin-bottom: 20px;
@@ -207,7 +207,7 @@ body {
 .menu-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 15px;
   height: calc(100% - 105px);
 }
 
@@ -234,7 +234,7 @@ body {
   text-align: center;
   margin-top: 0;
   margin-bottom: 10px;
-  font-size: 58px;
+  font-size: 80px;
 }
 
 /* ---------- MENU ITEMS ---------- */
@@ -247,13 +247,13 @@ body {
 .menu-item h3 {
   font-family: "Brasika", serif;
   color: #f4d36b;
-  font-size: 26px;
+  font-size: 40px;
   font-weight: normal;
   margin: 0 0 6px;
 }
 
 .menu-item p {
-  font-size: 15px;
+  font-size: 25px;
   font-family: "Franklin", sans-serif;
   line-height: 1.35;
   color: #fff4df;
@@ -264,7 +264,7 @@ body {
   display: block;
   font-family: "Brasika", serif;
   color: #fff4df;
-  font-size: 18px;
+  font-size: 30px;
   font-weight: normal;
 }
 
