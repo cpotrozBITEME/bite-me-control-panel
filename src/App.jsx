@@ -15,14 +15,13 @@ const defaultPanels = [
 export default function App() {
 
     const [service, setService] = useState("Lunch");
-
     const [selected, setSelected] = useState([]);
 
   const [panels, setPanels] = useState(defaultPanels);
   const [menuItems, setMenuItems] = useState([]);
-  const [publishMode, setPublishMode] = useState(false);
   const sheetUrl =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnwb0SjjT3gJ2osQPssUl55MHPgBM8arCQhrL_HTjvS-wtbO8K1vfkwZz5COFa5K852jJ3FBaY_dCj/pub?gid=525361053&single=true&output=csv";
+  const isDisplayPage = window.location.pathname === "/display";
 
 useEffect(() => {
   fetch(sheetUrl)
@@ -92,9 +91,9 @@ const tacoCount = selected.filter((name) => {
 
 const compactMode = tacoCount >= 4;
   return (
-    <div className={`app ${publishMode ? "publish" : ""}`}>
-    {!publishMode && (
-        <aside className="builder">
+    <div className={`app ${isDisplayPage ? "publish" : ""}`}>
+    {!isDisplayPage && (
+  <aside className="builder">
         <h1>🌮 Bite Me</h1>
         <h2>Control Panel</h2>
         <p className="tagline">
@@ -102,10 +101,10 @@ const compactMode = tacoCount >= 4;
 </p>
 
 <button
-    className="publish-button"
-    onClick={() => setPublishMode(!publishMode)}
+  className="publish-button"
+  onClick={() => window.open("/display", "_blank")}
 >
-    {publishMode ? "✏️ Edit Mode" : "📺 Display Mode"}
+  📺 Open TV Display
 </button>
 
 <section className="control-section">
@@ -172,7 +171,7 @@ const compactMode = tacoCount >= 4;
       </aside>
 )}
 
-<main className={`preview-wrap ${publishMode ? "publish" : ""}`}>
+<main className={`preview-wrap ${isDisplayPage ? "publish" : ""}`}>
        <div className={`menu-preview ${compactMode ? "compact" : ""}`}>
         <img src={cornerTopLeft} className="corner tl" alt="" />
 <img src={cornerTopRight} className="corner tr" alt="" />
