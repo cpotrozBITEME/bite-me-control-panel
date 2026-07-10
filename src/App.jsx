@@ -21,7 +21,7 @@ export default function App() {
   const [menuItems, setMenuItems] = useState([]);
   const sheetUrl =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnwb0SjjT3gJ2osQPssUl55MHPgBM8arCQhrL_HTjvS-wtbO8K1vfkwZz5COFa5K852jJ3FBaY_dCj/pub?gid=525361053&single=true&output=csv";
-  const isDisplayPage = window.location.pathname === "/display";
+  const isDisplayPage = window.location.pathname.startsWith("/display");
 
 useEffect(() => {
   fetch(sheetUrl)
@@ -96,8 +96,9 @@ const compactMode = tacoCount >= 4;
   <aside className="builder">
         <h1>🌮 Bite Me</h1>
         <h2>Control Panel</h2>
-        <p className="tagline">
-    Tick today's items. Rename and reorder panels live.
+
+        <p className="tagline"> 
+          Tick today's items. Rename and reorder panels live.
 </p>
 
 <button
