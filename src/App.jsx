@@ -5,6 +5,14 @@ import cornerTopRight from "./assets/decorations/corner top right.svg";
 import cornerBottomLeft from "./assets/decorations/corner bottom left.svg";
 import cornerBottomRight from "./assets/decorations/corner bottom right.svg";
 import Papa from "papaparse";
+import { db } from "./firebase";
+
+import {
+  doc,
+  getDoc,
+  setDoc,
+  onSnapshot,
+} from "firebase/firestore";
 
 const defaultPanels = [
   { id: "tacos", category: "Tacos", heading: "TACOS" },
@@ -89,6 +97,16 @@ const tacoCount = selected.filter((name) => {
   return item?.category === "Tacos";
 }).length;
 
+const publishMenu = async () => {
+  await setDoc(doc(db, "menus", "current"), {
+    selected,
+    panels,
+    service,
+    publishedAt: new Date().toISOString(),
+  });
+
+  alert("Menu published!");
+};
 const compactMode = tacoCount >= 4;
   return (
     <div className={`app ${isDisplayPage ? "publish" : ""}`}>
@@ -100,6 +118,13 @@ const compactMode = tacoCount >= 4;
         <p className="tagline"> 
           Tick today's items. Rename and reorder panels live.
 </p>
+
+<button
+  className="publish-button"
+  onClick={publishMenu}
+>
+  ✅ Publish Menu
+</button>
 
 <button
   className="publish-button"
