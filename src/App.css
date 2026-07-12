@@ -253,9 +253,9 @@ body {
 }
 
 .menu-item p {
-  font-size: 30px;
+  font-size: 32px;
   font-family: "Franklin", sans-serif;
-  line-height: 1.35;
+  line-height: 1.15;
   color: #fff4df;
   margin: 0 0 8px;
 }
