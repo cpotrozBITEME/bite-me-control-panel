@@ -45,21 +45,26 @@ body {
 }
 
 .app.publish .preview-wrap {
-  padding: 0;
   width: 100vw;
   height: 100vh;
+  padding: 0;
   overflow: hidden;
-  align-items: center;
 }
 
 .app.publish .menu-preview {
+  position: relative;
+  top: auto;
+  left: auto;
+
   width: 100vw;
   height: 100vh;
   max-width: none;
+
+  transform: none;
   aspect-ratio: auto;
+
   border-radius: 0;
   box-shadow: none;
-  padding: 35px;
 }
 /* ---------- LEFT PANEL ---------- */
 
@@ -161,12 +166,10 @@ body {
 /* ---------- PREVIEW ---------- */
 
 .preview-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 50px;
+  position: relative;
   height: 100vh;
-  overflow: auto;
+  overflow: hidden;
+  padding: 0;
 }
 
 .menu-preview {

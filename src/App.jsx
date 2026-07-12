@@ -30,7 +30,6 @@ export default function App() {
   const sheetUrl =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnwb0SjjT3gJ2osQPssUl55MHPgBM8arCQhrL_HTjvS-wtbO8K1vfkwZz5COFa5K852jJ3FBaY_dCj/pub?gid=525361053&single=true&output=csv";
   const isDisplayPage = window.location.pathname.startsWith("/display");
-  const [previewScale, setPreviewScale] = useState(1);
 
 useEffect(() => {
   fetch(sheetUrl)
@@ -81,36 +80,7 @@ setMenuItems(sortedItems);
       });
     });
 }, []);
-useEffect(() => {
-  const resizePreview = () => {
-    if (isDisplayPage) {
-      setPreviewScale(1);
-      return;
-    }
 
-    const builderWidth = 360;
-    const pagePadding = 40;
-
-    const availableWidth =
-      window.innerWidth - builderWidth - pagePadding;
-
-    const availableHeight =
-      window.innerHeight - pagePadding;
-
-    const widthScale = availableWidth / 1600;
-    const heightScale = availableHeight / 900;
-
-    setPreviewScale(Math.min(widthScale, heightScale, 1));
-  };
-
-  resizePreview();
-
-  window.addEventListener("resize", resizePreview);
-
-  return () => {
-    window.removeEventListener("resize", resizePreview);
-  };
-}, [isDisplayPage]);
 const toggleItem = (name) => {
     setSelected((current) =>
       current.includes(name)
@@ -242,16 +212,7 @@ const compactMode = tacoCount >= 4;
 )}
 
 <main className={`preview-wrap ${isDisplayPage ? "publish" : ""}`}>
-       <div
-  className={`menu-preview ${compactMode ? "compact" : ""}`}
-  style={
-    !isDisplayPage
-      ? {
-          transform: `translateX(-50%) scale(${previewScale})`,
-        }
-      : undefined
-  }
->
+  <div className={`menu-preview ${compactMode ? "compact" : ""}`}>
         <img src={cornerTopLeft} className="corner tl" alt="" />
 <img src={cornerTopRight} className="corner tr" alt="" />
 <img src={cornerBottomLeft} className="corner bl" alt="" />
