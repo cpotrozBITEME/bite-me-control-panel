@@ -52,12 +52,26 @@ useEffect(() => {
               notes: row.Notes?.trim(),
               active: row["Available today"] === "TRUE",
               selectedToday: row["Selected Today"] === "TRUE",
+              displayOrder: Number(row["Display Order"] || 999),
+featured: row["Feature Today"] === "TRUE",
             }))
             .filter((item) => item.active && item.name);
 
-          setMenuItems(loadedItems);
+          const sortedItems = [...loadedItems].sort((a, b) => {
+  if (a.category === b.category) {
+    if (a.featured !== b.featured) {
+      return a.featured ? -1 : 1;
+    }
 
-          const selectedFromSheet = loadedItems
+    return a.displayOrder - b.displayOrder;
+  }
+
+  return 0;
+});
+
+setMenuItems(sortedItems);
+
+          const selectedFromSheet = sortedItems
             .filter((item) => item.selectedToday)
             .map((item) => item.name);
 
