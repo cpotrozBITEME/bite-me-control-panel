@@ -241,19 +241,19 @@ body {
 
 .menu-item {
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 8px;
 }
 
 .menu-item h3 {
   font-family: "Brasika", serif;
   color: #f4d36b;
-  font-size: 45px;
+  font-size: 43px;
   font-weight: normal;
   margin: 0 0 6px;
 }
 
 .menu-item p {
-  font-size: 32px;
+  font-size: 30px;
   font-family: "Franklin", sans-serif;
   line-height: 1.35;
   color: #fff4df;
@@ -264,7 +264,7 @@ body {
   display: block;
   font-family: "Brasika", serif;
   color: #fff4df;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: normal;
 }
 
