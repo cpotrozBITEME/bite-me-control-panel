@@ -391,3 +391,25 @@ body {
   margin: 10px auto 18px;
   object-fit: contain;
 }
+
+/* TV safe area — prevents edges and bottom items being cut off */
+.app.publish .preview-wrap {
+  width: 100vw;
+  height: 100vh;
+  padding: 2vh 2vw;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app.publish .menu-preview {
+  width: 96vw;
+  height: 96vh;
+  max-width: none;
+  aspect-ratio: auto;
+  margin: 0;
+  transform: none;
+  border-radius: 0;
+  box-shadow: none;
+}
