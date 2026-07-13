@@ -404,8 +404,8 @@ body {
 }
 
 .app.publish .menu-preview {
-  width: 96vw;
-  height: 96vh;
+  width: 92vw;
+  height: 92vh;
   max-width: none;
   aspect-ratio: auto;
   margin: 0;
