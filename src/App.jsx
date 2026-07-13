@@ -10,6 +10,11 @@ import tacoPriceCard from "./assets/decorations/taco-price-card.svg";
 import Papa from "papaparse";
 import { db } from "./firebase";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import DisplayOptions from "./components/DisplayOptions";
+import {
+  importMenuItems,
+  listenToMenuItems,
+} from "./services/menuItemsService";
 
 const defaultPanels = [
   {
@@ -251,6 +256,21 @@ export default function App() {
     return unsubscribe;
   }, [isDisplayPage]);
 
+  useEffect(() => {
+  const stopListening = listenToMenuItems(
+    (items) => {
+      if (items.length > 0) {
+        setMenuItems(items);
+      }
+    },
+    (error) => {
+      console.error("Could not load Firebase menu items:", error);
+    }
+  );
+
+  return stopListening;
+}, []);
+
   const toggleItem = (name) => {
     setSelected((current) =>
       current.includes(name)
@@ -301,6 +321,16 @@ export default function App() {
       [optionName]: !current[optionName],
     }));
   };
+
+  const importSheetItemsToFirebase = async () => {
+  try {
+    await importMenuItems(menuItems);
+    alert("Menu items copied to Firebase!");
+  } catch (error) {
+    console.error("Could not import menu items:", error);
+    alert("The import failed. Please try again.");
+  }
+};
 
   const publishMenu = async () => {
     try {
@@ -378,28 +408,18 @@ export default function App() {
           >
             📺 Open TV Display
           </button>
+          <button
+  type="button"
+  className="publish-button"
+  onClick={importSheetItemsToFirebase}
+>
+  📥 Import Google Sheet to Firebase
+</button>
 
-          <section className="control-section">
-            <h3>Display Options</h3>
-
-            <button
-              type="button"
-              className={`display-option-button ${
-                displayOptions.tacoPriceCard
-                  ? "active"
-                  : ""
-              }`}
-              onClick={() =>
-                toggleDisplayOption(
-                  "tacoPriceCard"
-                )
-              }
-            >
-              {displayOptions.tacoPriceCard
-                ? "✓ Taco price card is on"
-                : "Use taco price card"}
-            </button>
-          </section>
+          <DisplayOptions
+  displayOptions={displayOptions}
+  toggleDisplayOption={toggleDisplayOption}
+/>
 
           <section className="control-section">
             <h3>Service</h3>
