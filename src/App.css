@@ -367,18 +367,7 @@ body {
   right: -1px;
 }
 
-.shared-taco-price {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 3px dotted #f49624;
-  font-family: "Brasika", serif;
-  font-size: 26px;
-  line-height: 1;
-  text-align: center;
-  color: #fff4df;
-}
-
-.taco-price-toggle {
+.display-option-button {
   width: 100%;
   padding: 12px;
   border: 2px solid #f49624;
@@ -390,7 +379,16 @@ body {
   text-align: left;
 }
 
-.taco-price-toggle.active {
+.display-option-button.active {
   background: #f49624;
   color: #1f1717;
+}
+
+.taco-price-card {
+  display: block;
+  width: min(85%, 320px);
+  height: auto;
+  margin: 4px auto 10px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
