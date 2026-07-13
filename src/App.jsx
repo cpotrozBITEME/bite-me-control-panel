@@ -21,13 +21,13 @@ export default function App() {
   const [selected, setSelected] = useState([]);
   const [panels, setPanels] = useState(defaultPanels);
   const [menuItems, setMenuItems] = useState([]);
+  const [showTacoPriceOnce, setShowTacoPriceOnce] = useState(false);
 
   const sheetUrl =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnwb0SjjT3gJ2osQPssUl55MHPgBM8arCQhrL_HTjvS-wtbO8K1vfkwZz5COFa5K852jJ3FBaY_dCj/pub?gid=525361053&single=true&output=csv";
 
   const isDisplayPage = window.location.pathname.startsWith("/display");
 
-  // Load product names, descriptions, prices and ordering from Google Sheets.
   useEffect(() => {
     fetch(`${sheetUrl}&refresh=${Date.now()}`)
       .then((response) => {
@@ -88,8 +88,6 @@ export default function App() {
 
             setMenuItems(sortedItems);
 
-            // Only the control panel initially reads "Selected Today".
-            // The TV display gets its selection from Firebase instead.
             if (!isDisplayPage) {
               const selectedFromSheet = sortedItems
                 .filter((item) => item.selectedToday)
@@ -109,7 +107,6 @@ export default function App() {
       });
   }, [isDisplayPage, sheetUrl]);
 
-  // The TV display listens for the latest published menu.
   useEffect(() => {
     if (!isDisplayPage) {
       return undefined;
@@ -139,6 +136,10 @@ export default function App() {
         );
 
         setService(publishedMenu.service || "Lunch");
+
+        setShowTacoPriceOnce(
+          publishedMenu.showTacoPriceOnce === true
+        );
       },
       (error) => {
         console.error("Could not load the published menu:", error);
@@ -184,6 +185,7 @@ export default function App() {
         selected,
         panels,
         service,
+        showTacoPriceOnce,
         publishedAt: new Date().toISOString(),
       });
 
@@ -255,6 +257,23 @@ export default function App() {
               </button>
             </div>
           </section>
+
+          <section className="control-section">
+  <h3>Taco Pricing</h3>
+
+  <button
+    className={`taco-price-toggle ${
+      showTacoPriceOnce ? "active" : ""
+    }`}
+    onClick={() =>
+      setShowTacoPriceOnce((current) => !current)
+    }
+  >
+    {showTacoPriceOnce
+      ? "✓ One shared taco price"
+      : "Show taco prices individually"}
+  </button>
+</section>
 
           <section className="control-section">
             <h3>Panel Headings</h3>
@@ -396,6 +415,11 @@ export default function App() {
                     selected.includes(item.name)
                 );
 
+                const sharedTacoPrice =
+                  panel.category === "Tacos" &&
+                  showTacoPriceOnce &&
+                  items.length > 0;
+
                 return (
                   <section
                     key={panel.id}
@@ -417,9 +441,18 @@ export default function App() {
                         >
                           <h3>{item.name}</h3>
                           <p>{item.description}</p>
-                          <strong>{item.price}</strong>
+
+                          {!sharedTacoPrice && (
+                            <strong>{item.price}</strong>
+                          )}
                         </div>
                       ))}
+
+                      {sharedTacoPrice && (
+                        <div className="shared-taco-price">
+                          {items[0].price}
+                        </div>
+                      )}
                     </div>
                   </section>
                 );
