@@ -5,39 +5,75 @@ import cornerTopLeft from "./assets/decorations/corner top left.svg";
 import cornerTopRight from "./assets/decorations/corner top right.svg";
 import cornerBottomLeft from "./assets/decorations/corner bottom left.svg";
 import cornerBottomRight from "./assets/decorations/corner bottom right.svg";
+import tacoPriceCard from "./assets/decorations/taco-price-card.svg";
 
 import Papa from "papaparse";
 import { db } from "./firebase";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 
 const defaultPanels = [
-  { id: "tacos", category: "Tacos", heading: "TACOS" },
-  { id: "mains", category: "Mains", heading: "MAINS" },
-  { id: "sides", category: "Sides", heading: "SIDES & DESSERTS" },
+  {
+    id: "tacos",
+    category: "Tacos",
+    heading: "TACOS",
+  },
+  {
+    id: "mains",
+    category: "Mains",
+    heading: "MAINS",
+  },
+  {
+    id: "sides",
+    category: "Sides",
+    heading: "SIDES & DESSERTS",
+  },
 ];
+
+const defaultDisplayOptions = {
+  tacoPriceCard: false,
+};
 
 export default function App() {
   const [service, setService] = useState("Lunch");
   const [selected, setSelected] = useState([]);
   const [panels, setPanels] = useState(defaultPanels);
   const [menuItems, setMenuItems] = useState([]);
-  const [showTacoPriceOnce, setShowTacoPriceOnce] = useState(false);
+
+  const [displayOptions, setDisplayOptions] = useState(
+    defaultDisplayOptions
+  );
 
   const sheetUrl =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnwb0SjjT3gJ2osQPssUl55MHPgBM8arCQhrL_HTjvS-wtbO8K1vfkwZz5COFa5K852jJ3FBaY_dCj/pub?gid=525361053&single=true&output=csv";
 
-  const isDisplayPage = window.location.pathname.startsWith("/display");
+  const isDisplayPage =
+    window.location.pathname.startsWith("/display");
 
+  /*
+   * Load the product catalogue from Google Sheets.
+   * Google Sheets controls:
+   * - item names
+   * - descriptions
+   * - prices
+   * - availability
+   * - display order
+   * - featured items
+   */
   useEffect(() => {
-    fetch(`${sheetUrl}&refresh=${Date.now()}`)
-      .then((response) => {
+    const loadMenuItems = async () => {
+      try {
+        const response = await fetch(
+          `${sheetUrl}&refresh=${Date.now()}`
+        );
+
         if (!response.ok) {
-          throw new Error(`Google Sheets returned ${response.status}`);
+          throw new Error(
+            `Google Sheets returned ${response.status}`
+          );
         }
 
-        return response.text();
-      })
-      .then((csvText) => {
+        const csvText = await response.text();
+
         Papa.parse(csvText, {
           header: true,
           skipEmptyLines: true,
@@ -45,7 +81,8 @@ export default function App() {
           complete: (results) => {
             const loadedItems = results.data
               .map((row) => {
-                const originalCategory = row.Category?.trim();
+                const originalCategory =
+                  row.Category?.trim();
 
                 return {
                   id: row.ID?.trim(),
@@ -55,42 +92,72 @@ export default function App() {
                       ? "Sides"
                       : `${originalCategory}s`,
 
+                  originalCategory,
+
                   name: row.Name?.trim(),
                   description: row.Description?.trim(),
                   price: row.Price?.trim(),
                   notes: row.Notes?.trim(),
 
                   active:
-                    row["Available today"]?.trim().toUpperCase() === "TRUE",
+                    row["Available today"]
+                      ?.trim()
+                      .toUpperCase() === "TRUE",
 
                   selectedToday:
-                    row["Selected Today"]?.trim().toUpperCase() === "TRUE",
+                    row["Selected Today"]
+                      ?.trim()
+                      .toUpperCase() === "TRUE",
 
-                  displayOrder: Number(row["Display Order"] || 999),
+                  displayOrder: Number(
+                    row["Display Order"] || 999
+                  ),
 
                   featured:
-                    row["Feature Today"]?.trim().toUpperCase() === "TRUE",
+                    row["Feature Today"]
+                      ?.trim()
+                      .toUpperCase() === "TRUE",
                 };
               })
-              .filter((item) => item.active && item.name);
+              .filter(
+                (item) =>
+                  item.active &&
+                  item.name &&
+                  item.category
+              );
 
-            const sortedItems = [...loadedItems].sort((a, b) => {
-              if (a.category !== b.category) {
-                return 0;
+            const sortedItems = [...loadedItems].sort(
+              (a, b) => {
+                if (a.category !== b.category) {
+                  return a.category.localeCompare(
+                    b.category
+                  );
+                }
+
+                if (a.featured !== b.featured) {
+                  return a.featured ? -1 : 1;
+                }
+
+                return (
+                  a.displayOrder - b.displayOrder
+                );
               }
-
-              if (a.featured !== b.featured) {
-                return a.featured ? -1 : 1;
-              }
-
-              return a.displayOrder - b.displayOrder;
-            });
+            );
 
             setMenuItems(sortedItems);
 
+            /*
+             * The control panel initially reads
+             * Selected Today from Google Sheets.
+             *
+             * The TV display gets its selected items
+             * from Firebase instead.
+             */
             if (!isDisplayPage) {
               const selectedFromSheet = sortedItems
-                .filter((item) => item.selectedToday)
+                .filter(
+                  (item) => item.selectedToday
+                )
                 .map((item) => item.name);
 
               setSelected(selectedFromSheet);
@@ -98,24 +165,42 @@ export default function App() {
           },
 
           error: (error) => {
-            console.error("Could not parse Google Sheet:", error);
+            console.error(
+              "Could not parse Google Sheet:",
+              error
+            );
           },
         });
-      })
-      .catch((error) => {
-        console.error("Could not load Google Sheet:", error);
-      });
+      } catch (error) {
+        console.error(
+          "Could not load Google Sheet:",
+          error
+        );
+      }
+    };
+
+    loadMenuItems();
   }, [isDisplayPage, sheetUrl]);
 
+  /*
+   * The TV display listens to Firebase.
+   * Whenever Publish Menu is clicked,
+   * the display updates automatically.
+   */
   useEffect(() => {
     if (!isDisplayPage) {
       return undefined;
     }
 
-    const menuDocument = doc(db, "menus", "current");
+    const menuDocument = doc(
+      db,
+      "menus",
+      "current"
+    );
 
     const unsubscribe = onSnapshot(
       menuDocument,
+
       (snapshot) => {
         if (!snapshot.exists()) {
           return;
@@ -135,14 +220,31 @@ export default function App() {
             : defaultPanels
         );
 
-        setService(publishedMenu.service || "Lunch");
-
-        setShowTacoPriceOnce(
-          publishedMenu.showTacoPriceOnce === true
+        setService(
+          publishedMenu.service || "Lunch"
         );
+
+        /*
+         * Supports both the new displayOptions format
+         * and the older showTacoPriceOnce setting.
+         */
+        setDisplayOptions({
+          ...defaultDisplayOptions,
+
+          ...(publishedMenu.displayOptions || {}),
+
+          tacoPriceCard:
+            publishedMenu.displayOptions
+              ?.tacoPriceCard === true ||
+            publishedMenu.showTacoPriceOnce === true,
+        });
       },
+
       (error) => {
-        console.error("Could not load the published menu:", error);
+        console.error(
+          "Could not load the published menu:",
+          error
+        );
       }
     );
 
@@ -152,7 +254,9 @@ export default function App() {
   const toggleItem = (name) => {
     setSelected((current) =>
       current.includes(name)
-        ? current.filter((item) => item !== name)
+        ? current.filter(
+            (itemName) => itemName !== name
+          )
         : [...current, name]
     );
   };
@@ -160,7 +264,9 @@ export default function App() {
   const updateHeading = (id, heading) => {
     setPanels((current) =>
       current.map((panel) =>
-        panel.id === id ? { ...panel, heading } : panel
+        panel.id === id
+          ? { ...panel, heading }
+          : panel
       )
     );
   };
@@ -168,56 +274,92 @@ export default function App() {
   const movePanel = (index, direction) => {
     const newIndex = index + direction;
 
-    if (newIndex < 0 || newIndex >= panels.length) {
+    if (
+      newIndex < 0 ||
+      newIndex >= panels.length
+    ) {
       return;
     }
 
-    const updated = [...panels];
-    const [moved] = updated.splice(index, 1);
+    const updatedPanels = [...panels];
 
-    updated.splice(newIndex, 0, moved);
-    setPanels(updated);
+    const [movedPanel] =
+      updatedPanels.splice(index, 1);
+
+    updatedPanels.splice(
+      newIndex,
+      0,
+      movedPanel
+    );
+
+    setPanels(updatedPanels);
+  };
+
+  const toggleDisplayOption = (optionName) => {
+    setDisplayOptions((current) => ({
+      ...current,
+      [optionName]: !current[optionName],
+    }));
   };
 
   const publishMenu = async () => {
     try {
-      await setDoc(doc(db, "menus", "current"), {
-        selected,
-        panels,
-        service,
-        showTacoPriceOnce,
-        publishedAt: new Date().toISOString(),
-      });
+      await setDoc(
+        doc(db, "menus", "current"),
+        {
+          selected,
+          panels,
+          service,
+          displayOptions,
+          publishedAt:
+            new Date().toISOString(),
+        }
+      );
 
       alert("Menu published!");
     } catch (error) {
-      console.error("Could not publish menu:", error);
-      alert("The menu could not be published. Please try again.");
+      console.error(
+        "Could not publish menu:",
+        error
+      );
+
+      alert(
+        "The menu could not be published. Please try again."
+      );
     }
   };
 
-  const tacoCount = selected.filter((name) => {
-    const item = menuItems.find(
-      (menuItem) => menuItem.name === name
-    );
+  const tacoCount = selected.filter(
+    (name) => {
+      const item = menuItems.find(
+        (menuItem) =>
+          menuItem.name === name
+      );
 
-    return item?.category === "Tacos";
-  }).length;
+      return item?.category === "Tacos";
+    }
+  ).length;
 
   const compactMode = tacoCount >= 4;
 
   return (
-    <div className={`app ${isDisplayPage ? "publish" : ""}`}>
+    <div
+      className={`app ${
+        isDisplayPage ? "publish" : ""
+      }`}
+    >
       {!isDisplayPage && (
         <aside className="builder">
           <h1>🌮 Bite Me</h1>
           <h2>Control Panel</h2>
 
           <p className="tagline">
-            Tick today&apos;s items. Rename and reorder panels live.
+            Tick today&apos;s items, choose your
+            display options, then publish.
           </p>
 
           <button
+            type="button"
             className="publish-button"
             onClick={publishMenu}
           >
@@ -225,33 +367,82 @@ export default function App() {
           </button>
 
           <button
+            type="button"
             className="publish-button"
-            onClick={() => window.open("/display", "_blank")}
+            onClick={() =>
+              window.open(
+                "/display",
+                "_blank"
+              )
+            }
           >
             📺 Open TV Display
           </button>
+
+          <section className="control-section">
+            <h3>Display Options</h3>
+
+            <button
+              type="button"
+              className={`display-option-button ${
+                displayOptions.tacoPriceCard
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() =>
+                toggleDisplayOption(
+                  "tacoPriceCard"
+                )
+              }
+            >
+              {displayOptions.tacoPriceCard
+                ? "✓ Taco price card is on"
+                : "Use taco price card"}
+            </button>
+          </section>
 
           <section className="control-section">
             <h3>Service</h3>
 
             <div className="service-toggle">
               <button
-                className={service === "Lunch" ? "active" : ""}
-                onClick={() => setService("Lunch")}
+                type="button"
+                className={
+                  service === "Lunch"
+                    ? "active"
+                    : ""
+                }
+                onClick={() =>
+                  setService("Lunch")
+                }
               >
                 Lunch
               </button>
 
               <button
-                className={service === "Dinner" ? "active" : ""}
-                onClick={() => setService("Dinner")}
+                type="button"
+                className={
+                  service === "Dinner"
+                    ? "active"
+                    : ""
+                }
+                onClick={() =>
+                  setService("Dinner")
+                }
               >
                 Dinner
               </button>
 
               <button
-                className={service === "None" ? "active" : ""}
-                onClick={() => setService("None")}
+                type="button"
+                className={
+                  service === "None"
+                    ? "active"
+                    : ""
+                }
+                onClick={() =>
+                  setService("None")
+                }
               >
                 No Heading
               </button>
@@ -259,55 +450,46 @@ export default function App() {
           </section>
 
           <section className="control-section">
-  <h3>Taco Pricing</h3>
-
-  <button
-    className={`taco-price-toggle ${
-      showTacoPriceOnce ? "active" : ""
-    }`}
-    onClick={() =>
-      setShowTacoPriceOnce((current) => !current)
-    }
-  >
-    {showTacoPriceOnce
-      ? "✓ One shared taco price"
-      : "Show taco prices individually"}
-  </button>
-</section>
-
-          <section className="control-section">
             <h3>Panel Headings</h3>
 
-            {panels.map((panel, index) => (
-              <div
-                key={panel.id}
-                className="panel-control"
-              >
-                <input
-                  value={panel.heading}
-                  onChange={(event) =>
-                    updateHeading(
-                      panel.id,
-                      event.target.value
-                    )
-                  }
-                />
-
-                <button
-                  onClick={() => movePanel(index, -1)}
-                  aria-label={`Move ${panel.heading} up`}
+            {panels.map(
+              (panel, index) => (
+                <div
+                  key={panel.id}
+                  className="panel-control"
                 >
-                  ↑
-                </button>
+                  <input
+                    value={panel.heading}
+                    onChange={(event) =>
+                      updateHeading(
+                        panel.id,
+                        event.target.value
+                      )
+                    }
+                  />
 
-                <button
-                  onClick={() => movePanel(index, 1)}
-                  aria-label={`Move ${panel.heading} down`}
-                >
-                  ↓
-                </button>
-              </div>
-            ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      movePanel(index, -1)
+                    }
+                    aria-label={`Move ${panel.heading} up`}
+                  >
+                    ↑
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      movePanel(index, 1)
+                    }
+                    aria-label={`Move ${panel.heading} down`}
+                  >
+                    ↓
+                  </button>
+                </div>
+              )
+            )}
           </section>
 
           {defaultPanels.map((panel) => (
@@ -320,16 +502,21 @@ export default function App() {
               {menuItems
                 .filter(
                   (item) =>
-                    item.category === panel.category
+                    item.category ===
+                    panel.category
                 )
                 .map((item) => (
                   <label
-                    key={item.id || item.name}
+                    key={
+                      item.id || item.name
+                    }
                     className="checkbox-row"
                   >
                     <input
                       type="checkbox"
-                      checked={selected.includes(item.name)}
+                      checked={selected.includes(
+                        item.name
+                      )}
                       onChange={() =>
                         toggleItem(item.name)
                       }
@@ -355,7 +542,9 @@ export default function App() {
         <main className="preview-wrap publish">
           <div
             className={`menu-preview ${
-              compactMode ? "compact" : ""
+              compactMode
+                ? "compact"
+                : ""
             }`}
           >
             <img
@@ -382,26 +571,39 @@ export default function App() {
               alt=""
             />
 
-            {!compactMode && service !== "None" && (
-              <div className="menu-header">
-                {service.toUpperCase()} MENU
-              </div>
-            )}
+            {!compactMode &&
+              service !== "None" && (
+                <div className="menu-header">
+                  {service.toUpperCase()} MENU
+                </div>
+              )}
 
             <div
               className="menu-grid"
               style={{
                 gridTemplateColumns: panels
                   .map((panel) => {
-                    const itemCount = menuItems.filter(
-                      (item) =>
-                        item.category === panel.category &&
-                        selected.includes(item.name)
-                    ).length;
+                    const itemCount =
+                      menuItems.filter(
+                        (item) =>
+                          item.category ===
+                            panel.category &&
+                          selected.includes(
+                            item.name
+                          )
+                      ).length;
 
-                    if (itemCount >= 5) return "1.8fr";
-                    if (itemCount >= 3) return "1.4fr";
-                    if (itemCount === 0) return "0.7fr";
+                    if (itemCount >= 5) {
+                      return "1.8fr";
+                    }
+
+                    if (itemCount >= 3) {
+                      return "1.4fr";
+                    }
+
+                    if (itemCount === 0) {
+                      return "0.7fr";
+                    }
 
                     return "1fr";
                   })
@@ -409,15 +611,20 @@ export default function App() {
               }}
             >
               {panels.map((panel) => {
-                const items = menuItems.filter(
-                  (item) =>
-                    item.category === panel.category &&
-                    selected.includes(item.name)
-                );
+                const items =
+                  menuItems.filter(
+                    (item) =>
+                      item.category ===
+                        panel.category &&
+                      selected.includes(
+                        item.name
+                      )
+                  );
 
-                const sharedTacoPrice =
-                  panel.category === "Tacos" &&
-                  showTacoPriceOnce &&
+                const useTacoPriceCard =
+                  panel.category ===
+                    "Tacos" &&
+                  displayOptions.tacoPriceCard &&
                   items.length > 0;
 
                 return (
@@ -426,6 +633,14 @@ export default function App() {
                     className="menu-panel"
                   >
                     <h2>{panel.heading}</h2>
+
+                    {useTacoPriceCard && (
+                      <img
+                        src={tacoPriceCard}
+                        className="taco-price-card"
+                        alt="Taco prices"
+                      />
+                    )}
 
                     <div className="menu-items">
                       {items.length === 0 && (
@@ -436,23 +651,27 @@ export default function App() {
 
                       {items.map((item) => (
                         <div
-                          key={item.id || item.name}
+                          key={
+                            item.id ||
+                            item.name
+                          }
                           className="menu-item"
                         >
-                          <h3>{item.name}</h3>
-                          <p>{item.description}</p>
+                          <h3>
+                            {item.name}
+                          </h3>
 
-                          {!sharedTacoPrice && (
-                            <strong>{item.price}</strong>
+                          <p>
+                            {item.description}
+                          </p>
+
+                          {!useTacoPriceCard && (
+                            <strong>
+                              {item.price}
+                            </strong>
                           )}
                         </div>
                       ))}
-
-                      {sharedTacoPrice && (
-                        <div className="shared-taco-price">
-                          {items[0].price}
-                        </div>
-                      )}
                     </div>
                   </section>
                 );
