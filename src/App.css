@@ -392,24 +392,23 @@ body {
   object-fit: contain;
 }
 
-/* TV safe area — prevents edges and bottom items being cut off */
-.app.publish .preview-wrap {
+/* Make the three menu panels fill the TV vertically */
+.app.publish .menu-preview {
+  display: flex;
+  flex-direction: column;
   width: 100vw;
   height: 100vh;
-  padding: 2vh 2vw;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 0;
 }
 
-.app.publish .menu-preview {
-  width: 96vw;
-  height: 96vh;
-  max-width: none;
-  aspect-ratio: auto;
-  margin: 0;
-  transform: none;
-  border-radius: 0;
-  box-shadow: none;
+.app.publish .menu-grid {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  align-items: stretch;
+}
+
+.app.publish .menu-panel {
+  height: 100%;
+  min-height: 0;
 }
