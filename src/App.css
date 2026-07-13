@@ -163,6 +163,17 @@ body {
     background: #fab000;
 }
 
+.shared-taco-price {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 3px dotted #f49624;
+  font-family: "Brasika", serif;
+  font-size: 26px;
+  line-height: 1;
+  text-align: center;
+  color: #fff4df;
+}
+
 /* ---------- PREVIEW ---------- */
 
 .preview-wrap {
@@ -365,15 +376,4 @@ body {
 .corner.br {
   bottom: -1px;
   right: -1px;
-}
-
-.shared-taco-price {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 3px dotted #f49624;
-  font-family: "Brasika", serif;
-  font-size: 26px;
-  line-height: 1;
-  text-align: center;
-  color: #fff4df;
 }
