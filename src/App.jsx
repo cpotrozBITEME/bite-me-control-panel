@@ -717,7 +717,7 @@ const publishMenu = async () => {
                     className="menu-panel"
                   >
                     <h2>{panel.heading}</h2>
-{displayOptions.decorations && panel.id === "tacos" && (
+{displayOptions.leftDecal === true && panel.id === "tacos" && (
   <img
     src={cactusCorner}
     className="panel-decal panel-decal-left"
@@ -725,7 +725,7 @@ const publishMenu = async () => {
   />
 )}
 
-{displayOptions.decorations && panel.id === "mains" && (
+{displayOptions.middleDecal === true && panel.id === "mains" && (
   <img
     src={cactusTall}
     className="panel-decal panel-decal-middle"
@@ -733,7 +733,7 @@ const publishMenu = async () => {
   />
 )}
 
-{displayOptions.decorations && panel.id === "sides" && (
+{displayOptions.rightDecal === true && panel.id === "sides" && (
   <img
     src={churroCorner}
     className="panel-decal panel-decal-right"
