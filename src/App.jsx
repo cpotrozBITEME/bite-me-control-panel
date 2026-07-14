@@ -1,3 +1,4 @@
+import MenuItemsManager from "./components/MenuItemsManager";
 import { useEffect, useState } from "react";
 import "./App.css";
 
@@ -14,6 +15,8 @@ import DisplayOptions from "./components/DisplayOptions";
 import {
   importMenuItems,
   listenToMenuItems,
+  saveMenuItem,
+  setMenuItemArchived,
 } from "./services/menuItemsService";
 
 const defaultPanels = [
@@ -43,6 +46,7 @@ export default function App() {
   const [selected, setSelected] = useState([]);
   const [panels, setPanels] = useState(defaultPanels);
   const [menuItems, setMenuItems] = useState([]);
+  const [showPanelSettings, setShowPanelSettings] = useState(false);
 
   const [displayOptions, setDisplayOptions] = useState(
     defaultDisplayOptions
@@ -125,11 +129,10 @@ export default function App() {
                 };
               })
               .filter(
-                (item) =>
-                  item.active &&
-                  item.name &&
-                  item.category
-              );
+  (item) =>
+    item.name &&
+    item.category
+);
 
             const sortedItems = [...loadedItems].sort(
               (a, b) => {
@@ -259,6 +262,8 @@ export default function App() {
   useEffect(() => {
   const stopListening = listenToMenuItems(
     (items) => {
+      console.log("Firebase menu items:", items);
+
       if (items.length > 0) {
         setMenuItems(items);
       }
@@ -270,6 +275,49 @@ export default function App() {
 
   return stopListening;
 }, []);
+
+useEffect(() => {
+  if (!isDisplayPage) return;
+
+  const interval = setInterval(() => {
+    console.log("❤️ Menu heartbeat", new Date().toLocaleTimeString());
+
+    // Tiny DOM update so the page isn't completely idle
+    document.title =
+      "Bite Me Menu " + (Date.now() % 2 === 0 ? "•" : "◦");
+  }, 30000);
+
+  return () => clearInterval(interval);
+}, [isDisplayPage]);
+
+useEffect(() => {
+  if (!isDisplayPage) return;
+
+  const refresh = setInterval(() => {
+    console.log("🔄 Refreshing display");
+    window.location.reload();
+  }, 10 * 60 * 1000);
+
+  return () => clearInterval(refresh);
+}, [isDisplayPage]);
+
+useEffect(() => {
+  if (!isDisplayPage) return;
+
+  const movement = setInterval(() => {
+    window.scrollTo({
+      top: 1,
+      behavior: "instant",
+    });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, 45000);
+
+  return () => clearInterval(movement);
+}, [isDisplayPage]);
 
   const toggleItem = (name) => {
     setSelected((current) =>
@@ -332,7 +380,25 @@ export default function App() {
   }
 };
 
-  const publishMenu = async () => {
+const handleSaveMenuItem = async (item) => {
+  try {
+    await saveMenuItem(item);
+  } catch (error) {
+    console.error("Could not save menu item:", error);
+    alert("The item could not be saved.");
+  }
+};
+
+const handleArchiveMenuItem = async (item) => {
+  try {
+    await setMenuItemArchived(item, !item.archived);
+  } catch (error) {
+    console.error("Could not update archive status:", error);
+    alert("The item could not be updated.");
+  }
+};
+
+const publishMenu = async () => {
     try {
       await setDoc(
         doc(db, "menus", "current"),
@@ -408,12 +474,13 @@ export default function App() {
           >
             📺 Open TV Display
           </button>
+
           <button
   type="button"
   className="publish-button"
   onClick={importSheetItemsToFirebase}
 >
-  📥 Import Google Sheet to Firebase
+  📥 Import full catalogue to Firebase
 </button>
 
           <DisplayOptions
@@ -470,83 +537,65 @@ export default function App() {
           </section>
 
           <section className="control-section">
-            <h3>Panel Headings</h3>
+  <button
+    type="button"
+    className="section-toggle-button"
+    onClick={() =>
+      setShowPanelSettings((current) => !current)
+    }
+  >
+    {showPanelSettings
+      ? "Hide Panel Settings"
+      : "Show Panel Settings"}
+  </button>
 
-            {panels.map(
-              (panel, index) => (
-                <div
-                  key={panel.id}
-                  className="panel-control"
-                >
-                  <input
-                    value={panel.heading}
-                    onChange={(event) =>
-                      updateHeading(
-                        panel.id,
-                        event.target.value
-                      )
-                    }
-                  />
+  {showPanelSettings && (
+    <>
+      <h3>Panel Headings</h3>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      movePanel(index, -1)
-                    }
-                    aria-label={`Move ${panel.heading} up`}
-                  >
-                    ↑
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      movePanel(index, 1)
-                    }
-                    aria-label={`Move ${panel.heading} down`}
-                  >
-                    ↓
-                  </button>
-                </div>
+      {panels.map((panel, index) => (
+        <div
+          key={panel.id}
+          className="panel-control"
+        >
+          <input
+            value={panel.heading}
+            onChange={(event) =>
+              updateHeading(
+                panel.id,
+                event.target.value
               )
-            )}
-          </section>
+            }
+          />
 
-          {defaultPanels.map((panel) => (
-            <section
-              key={panel.category}
-              className="control-section"
-            >
-              <h3>{panel.category}</h3>
+          <button
+            type="button"
+            onClick={() =>
+              movePanel(index, -1)
+            }
+          >
+            ↑
+          </button>
 
-              {menuItems
-                .filter(
-                  (item) =>
-                    item.category ===
-                    panel.category
-                )
-                .map((item) => (
-                  <label
-                    key={
-                      item.id || item.name
-                    }
-                    className="checkbox-row"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(
-                        item.name
-                      )}
-                      onChange={() =>
-                        toggleItem(item.name)
-                      }
-                    />
+          <button
+            type="button"
+            onClick={() =>
+              movePanel(index, 1)
+            }
+          >
+            ↓
+          </button>
+        </div>
+      ))}
+    </>
+  )}
+</section>
 
-                    {item.name}
-                  </label>
-                ))}
-            </section>
-          ))}
+          <MenuItemsManager
+  menuItems={menuItems}
+  onSaveItem={handleSaveMenuItem}
+  onArchiveItem={handleArchiveMenuItem}
+/>
         </aside>
       )}
 
