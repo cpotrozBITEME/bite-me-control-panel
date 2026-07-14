@@ -251,7 +251,8 @@ body {
   text-align: center;
   margin-top: 0;
   margin-bottom: 10px;
-  font-size: 90px;
+  font-size: 110px;
+  line-height: 1.15;
 }
 
 /* ---------- MENU ITEMS ---------- */
