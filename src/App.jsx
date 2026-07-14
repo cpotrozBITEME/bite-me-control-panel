@@ -43,6 +43,7 @@ const defaultPanels = [
 const defaultDisplayOptions = {
   tacoPriceCard: false,
   fitMode: "normal",
+  decorations: true,
 };
 
 export default function App() {
@@ -716,7 +717,7 @@ const publishMenu = async () => {
                     <h2>{panel.heading}</h2>
 {displayOptions.decorations && panel.id === "tacos" && (
   <img
-    src={cactusLeft}
+    src={cactusCorner}
     className="panel-decal panel-decal-left"
     alt=""
   />
@@ -724,7 +725,7 @@ const publishMenu = async () => {
 
 {displayOptions.decorations && panel.id === "mains" && (
   <img
-    src={cactusMiddle}
+    src={cactusTall}
     className="panel-decal panel-decal-middle"
     alt=""
   />
@@ -732,7 +733,7 @@ const publishMenu = async () => {
 
 {displayOptions.decorations && panel.id === "sides" && (
   <img
-    src={churroRight}
+    src={churroCorner}
     className="panel-decal panel-decal-right"
     alt=""
   />

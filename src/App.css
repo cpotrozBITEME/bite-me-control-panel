@@ -599,3 +599,40 @@ body {
   margin-bottom: 1px;
   line-height: 1.04;
 }
+
+.menu-panel {
+  position: relative;
+  overflow: visible;
+}
+
+.panel-decal {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  height: auto;
+}
+
+.menu-items,
+.menu-panel > h2,
+.taco-price-card {
+  position: relative;
+  z-index: 2;
+}
+
+.panel-decal-left {
+  left: -3px;
+  bottom: -4px;
+  width: 150px;
+}
+
+.panel-decal-middle {
+  right: -53px;
+  bottom: -6px;
+  width: 200px;
+}
+
+.panel-decal-right {
+  right: -4px;
+  bottom: -4px;
+  width: 140px;
+}
