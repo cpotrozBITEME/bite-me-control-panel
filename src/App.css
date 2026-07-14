@@ -249,7 +249,7 @@ body {
   font-family: "CalvousSpursStamp", serif;
   color: #f49624;
   text-align: center;
-  margin-top: 0;
+  margin-top: 10px;
   margin-bottom: 10px;
   font-size: 110px;
   line-height: 1.15;
@@ -539,7 +539,7 @@ body {
 }
 
 .menu-preview.fit-normal .menu-panel h2 {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .menu-preview.fit-normal .menu-item {
