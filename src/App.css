@@ -562,7 +562,7 @@ body {
 }
 
 .menu-preview.fit-compact .menu-panel h2 {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .menu-preview.fit-compact .menu-item {
@@ -585,7 +585,7 @@ body {
 }
 
 .menu-preview.fit-extraCompact .menu-panel h2 {
-  margin-bottom: 7px;
+  margin-bottom: 5px;
 }
 
 .menu-preview.fit-extraCompact .menu-item {
@@ -636,4 +636,36 @@ body {
   right: -4px;
   bottom: -4px;
   width: 140px;
+}
+
+.fit-mode-control {
+  margin-top: 14px;
+}
+
+.fit-mode-control > span {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #fff4df;
+}
+
+.fit-mode-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.fit-mode-buttons button {
+  padding: 9px 6px;
+  border: 2px solid #f49624;
+  border-radius: 8px;
+  background: transparent;
+  color: #f49624;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.fit-mode-buttons button.active {
+  background: #f49624;
+  color: #1f1717;
 }

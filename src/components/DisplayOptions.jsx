@@ -21,6 +21,36 @@ export default function DisplayOptions({
           : "Use Taco Price Card"}
       </button>
 
+<button
+  type="button"
+  className={`display-option-button ${
+    displayOptions.leftDecal ? "active" : ""
+  }`}
+  onClick={() => toggleDisplayOption("leftDecal")}
+>
+  {displayOptions.leftDecal ? "✓ Left Decal" : "Left Decal"}
+</button>
+
+<button
+  type="button"
+  className={`display-option-button ${
+    displayOptions.middleDecal ? "active" : ""
+  }`}
+  onClick={() => toggleDisplayOption("middleDecal")}
+>
+  {displayOptions.middleDecal ? "✓ Middle Decal" : "Middle Decal"}
+</button>
+
+<button
+  type="button"
+  className={`display-option-button ${
+    displayOptions.rightDecal ? "active" : ""
+  }`}
+  onClick={() => toggleDisplayOption("rightDecal")}
+>
+  {displayOptions.rightDecal ? "✓ Right Decal" : "Right Decal"}
+</button>
+
       <div className="fit-mode-control">
         <span>Menu fit</span>
 

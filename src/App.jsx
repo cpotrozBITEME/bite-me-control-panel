@@ -43,7 +43,9 @@ const defaultPanels = [
 const defaultDisplayOptions = {
   tacoPriceCard: false,
   fitMode: "normal",
-  decorations: true,
+  leftDecal: true,
+  middleDecal: true,
+  rightDecal: true,
 };
 
 export default function App() {
