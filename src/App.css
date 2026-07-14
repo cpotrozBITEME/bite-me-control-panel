@@ -529,3 +529,73 @@ body {
   background: #f49624;
   color: #1f1717;
 }
+
+/* Menu fit modes — spacing only */
+
+/* RELAXED / NORMAL */
+.menu-preview.fit-normal .menu-panel {
+  padding: 24px;
+}
+
+.menu-preview.fit-normal .menu-panel h2 {
+  margin-bottom: 20px;
+}
+
+.menu-preview.fit-normal .menu-item {
+  margin-bottom: 18px;
+}
+
+.menu-preview.fit-normal .menu-item h3 {
+  margin-bottom: 6px;
+}
+
+.menu-preview.fit-normal .menu-item p {
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+
+/* STANDARD / COMPACT */
+.menu-preview.fit-compact .menu-panel {
+  padding: 18px;
+}
+
+.menu-preview.fit-compact .menu-panel h2 {
+  margin-bottom: 12px;
+}
+
+.menu-preview.fit-compact .menu-item {
+  margin-bottom: 10px;
+}
+
+.menu-preview.fit-compact .menu-item h3 {
+  margin-bottom: 3px;
+}
+
+.menu-preview.fit-compact .menu-item p {
+  margin-bottom: 3px;
+  line-height: 1.12;
+}
+
+
+/* BUSY NIGHT / EXTRA COMPACT */
+.menu-preview.fit-extraCompact .menu-panel {
+  padding: 12px;
+}
+
+.menu-preview.fit-extraCompact .menu-panel h2 {
+  margin-bottom: 7px;
+}
+
+.menu-preview.fit-extraCompact .menu-item {
+  margin-bottom: 4px;
+}
+
+.menu-preview.fit-extraCompact .menu-item h3 {
+  margin-bottom: 1px;
+}
+
+.menu-preview.fit-extraCompact .menu-item p {
+  margin-bottom: 1px;
+  line-height: 1.04;
+}

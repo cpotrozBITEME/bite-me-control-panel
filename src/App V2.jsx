@@ -43,6 +43,7 @@ const defaultPanels = [
 const defaultDisplayOptions = {
   tacoPriceCard: false,
   fitMode: "normal",
+  decorations: true,
 };
 
 export default function App() {

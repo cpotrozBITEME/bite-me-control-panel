@@ -3,6 +3,8 @@ import MenuItemEditor from "./MenuItemEditor";
 
 export default function MenuItemsManager({
   menuItems,
+  selected,
+  onToggleSelected,
   onSaveItem,
   onArchiveItem,
 }) {
@@ -147,6 +149,15 @@ export default function MenuItemsManager({
                   : ""}
               </small>
             </div>
+
+<label className="checkbox-row managed-show-toggle">
+  <input
+    type="checkbox"
+    checked={selected.includes(item.name)}
+    onChange={() => onToggleSelected(item.name)}
+  />
+  Show on menu
+</label>
 
             <div className="managed-item-actions">
               <button

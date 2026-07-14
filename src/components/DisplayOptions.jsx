@@ -1,6 +1,7 @@
 export default function DisplayOptions({
   displayOptions,
   toggleDisplayOption,
+  setDisplayOption,
 }) {
   return (
     <section className="control-section">
@@ -19,6 +20,31 @@ export default function DisplayOptions({
           ? "✓ Taco Price Card"
           : "Use Taco Price Card"}
       </button>
+
+      <div className="fit-mode-control">
+        <span>Menu fit</span>
+
+        <div className="fit-mode-buttons">
+          {["normal", "compact", "extraCompact"].map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              className={
+                displayOptions.fitMode === mode
+                  ? "active"
+                  : ""
+              }
+              onClick={() =>
+                setDisplayOption("fitMode", mode)
+              }
+            >
+              {mode === "normal" && "Normal"}
+              {mode === "compact" && "Compact"}
+              {mode === "extraCompact" && "Extra compact"}
+            </button>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
