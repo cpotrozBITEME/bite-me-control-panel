@@ -169,13 +169,7 @@ export default function App() {
              * from Firebase instead.
              */
             if (!isDisplayPage) {
-              const selectedFromSheet = sortedItems
-                .filter(
-                  (item) => item.selectedToday
-                )
-                .map((item) => item.name);
-
-              setSelected(selectedFromSheet);
+            
             }
           },
 
