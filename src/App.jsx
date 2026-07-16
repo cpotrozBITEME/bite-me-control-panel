@@ -159,8 +159,6 @@ export default function App() {
               }
             );
 
-            setMenuItems(sortedItems);
-
             /*
              * The control panel initially reads
              * Selected Today from Google Sheets.
